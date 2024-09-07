@@ -1,0 +1,46 @@
+version: '3.1'
+
+services: 
+  aiv: 
+    container_name: aiv
+    image: jits023/aiv-all:6.0.0
+    ports: 
+      - "9090:8080"
+    depends_on:
+      - db
+    volumes:
+      - ./repository:/opt/repository
+ #     - ./data:/opt/data
+      - ./logs:/opt/logs
+      - ./logs/tomcat:/usr/local/tomcat/logs
+    restart: always
+    environment:
+      - CATALINA_OPTS=-Xmx8g -Xms4g -XX:MaxPermSize=1024m
+  db:
+    container_name: postgres
+    restart: always
+    image: postgres:13-alpine
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_DB: aiv
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    volumes:
+      - ./data/pg_data:/var/lib/postgresql/data
+      - ./config/sql/ai_tables_dpostgresql.sql:/docker-entrypoint-initdb.d/ai_tables_dpostgresql.sql
+    ports:
+      - "5432:5432"
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    volumes:
+      - ./data/pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
