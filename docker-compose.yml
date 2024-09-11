@@ -15,13 +15,13 @@ services:
       - ./logs/tomcat:/usr/local/tomcat/logs
     restart: always
     environment:
-      CATALINA_OPTS: -Xmx8g -Xms4g -XX:MaxPermSize=1024m
+#      CATALINA_OPTS: -Xmx8g -Xms4g -XX:MaxPermSize=1024m
       aiv_db_driver: org.postgresql.Driver
       aiv_db_url: jdbc:postgresql://db:5432/aiv
       aiv_db_user: postgres
       aiv_db_password: root
       db_type: postgresql
-    entrypoint: ["/opt/config/install.sh"]
+    command: ["/bin/bash", "-c", "/opt/config/install.sh && catalina.sh run"]
   db:
     container_name: postgres
     restart: always
